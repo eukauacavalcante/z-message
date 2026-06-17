@@ -59,7 +59,7 @@ BEFORE UPDATE ON contacts
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 
--- Dados de teste
+-- Dados de teste (use o formato 55 + DDD + Número sem espaços ou símbolos)
 INSERT INTO contacts (name, phone) VALUES
     ('João Silva',  '5583999998881'),
     ('Maria Souza', '5583999998882'),
