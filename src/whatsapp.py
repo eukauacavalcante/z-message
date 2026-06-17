@@ -16,7 +16,7 @@ def is_instance_connected(timeout: int = 5) -> bool:
         response = requests.get(url, headers=headers, timeout=timeout)
         if not response.ok:
             logger.warning(
-                'Z-API respondeu com status %s: %s', response.status_code, response.text
+                f'Z-API respondeu com status {response.status_code}: {response.text}',
             )
 
         data = response.json()
@@ -29,8 +29,8 @@ def is_instance_connected(timeout: int = 5) -> bool:
             )
 
         return bool(connected)
-    except RequestException as error:
-        logger.error('Falha ao verificar status da instância Z-API: %s', error)
+    except RequestException:
+        logger.error('Falha ao verificar status da instância Z-API:')
         return False
     except ValueError:
         logger.error('Falha ao interpretar resposta JSON da Z-API ao verificar status')
@@ -46,16 +46,23 @@ def send_message(phone: str, name: str) -> bool:
         'phone': phone,
         'message': f'Olá, {formatted_name} tudo bem com você?',
     }
-
     headers = {'Client-Token': ZAPI_CLIENT_TOKEN}
 
-    response = requests.post(url, json=payload, headers=headers, timeout=10)
-    response.raise_for_status()
-    body = response.json()
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()
+        body = response.json()
 
-    if isinstance(body, dict):
-        if body.get('error') or body.get('errors'):
-            logger.error(f'Resposta de erro da Z-API ao enviar para {name}: {body}')
-            return False
+        if isinstance(body, dict):
+            if body.get('error') or body.get('errors'):
+                logger.error(f'Resposta de erro interno da Z-API ao enviar para {name}')
+                return False
 
-    return True
+        return True
+
+    except RequestException as error:
+        status_code = getattr(error.response, 'status_code', 'Desconhecido')
+        logger.error(
+            f'Falha na requisição de envio para {name} (Status HTTP: {status_code})'
+        )
+        return False
