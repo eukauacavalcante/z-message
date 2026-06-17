@@ -1,0 +1,25 @@
+[project]
+name = "z-message"
+version = "0.1.0"
+description = "Um projeto para envio automatizado de mensagens via Whatsapp utilizando Supabase."
+authors = [
+    {name = "Kauã Cavalcante", email = "eukauasilvacavalcante@gmail.com"}
+]
+requires-python = ">=3.12"
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+[tool.taskipy.tasks]
+lint = 'ruff check .'
+lint_fix = 'ruff check --fix .'
+format = 'ruff format .'
+run = 'python -m src.main'
