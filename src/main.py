@@ -1,4 +1,6 @@
 import logging
+import random
+import time
 
 from src.database import get_contacts
 from src.logger_config import setup_logging
@@ -30,9 +32,11 @@ def main():
         logger.warning('Nenhum contato encontrado. Encerrando...')
         return
 
-    logger.info(f'{len(contacts)} contato(s) encontrado(s).\n')
+    total_contacts = len(contacts)
 
-    for contact in contacts:
+    logger.info(f'{total_contacts} contato(s) encontrado(s).\n')
+
+    for index, contact in enumerate(contacts, start=1):
         name = contact['name']
         phone = contact['phone']
         masked_phone = phone[:4] + '****' + phone[-4:]
@@ -44,6 +48,13 @@ def main():
             logger.info('Enviado com sucesso.')
         else:
             logger.error('Falha no envio.')
+
+        if index < total_contacts:
+            delay_seconds = random.randint(2, 5)
+            logger.info(
+                f'Aguardando {delay_seconds} segundos antes do próximo envio...\n'
+            )
+            time.sleep(delay_seconds)
 
 
 if __name__ == '__main__':
