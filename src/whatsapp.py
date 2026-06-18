@@ -27,8 +27,8 @@ def is_instance_connected(timeout: int = 5) -> bool:
                 'Z-API reportou instância desconectada: %s',
                 data.get('error', 'sem detalhes'),
             )
+        return connected
 
-        return bool(connected)
     except RequestException:
         logger.error('Falha ao verificar status da instância Z-API:')
         return False
@@ -51,13 +51,6 @@ def send_message(phone: str, name: str) -> bool:
     try:
         response = requests.post(url, json=payload, headers=headers, timeout=10)
         response.raise_for_status()
-        body = response.json()
-
-        if isinstance(body, dict):
-            if body.get('error') or body.get('errors'):
-                logger.error(f'Resposta de erro interno da Z-API ao enviar para {name}')
-                return False
-
         return True
 
     except RequestException as error:
