@@ -24,8 +24,8 @@ def main():
 
     try:
         contacts = get_contacts()
-    except Exception as err:
-        logger.error('Erro ao buscar contatos: %s', err)
+    except Exception as error:
+        logger.error(f'Erro ao buscar contatos: {error}')
         return
 
     if not contacts:
@@ -35,6 +35,8 @@ def main():
     total_contacts = len(contacts)
 
     logger.info(f'{total_contacts} contato(s) encontrado(s).\n')
+
+    start_time = time.monotonic()
 
     for index, contact in enumerate(contacts, start=1):
         name = contact['name']
@@ -55,6 +57,11 @@ def main():
                 f'Aguardando {delay_seconds} segundos antes do próximo envio...\n'
             )
             time.sleep(delay_seconds)
+
+    duration = time.monotonic() - start_time
+
+    logger.info('\nProcessamento concluído para todos os contatos.')
+    logger.info(f'Tempo de execução: {duration:.2f}s')
 
 
 if __name__ == '__main__':
